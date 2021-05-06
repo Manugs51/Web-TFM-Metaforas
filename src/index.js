@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import React, { useState, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBCardTitle, MDBInput, MDBCardText, MDBSpinner, MDBBtn } from 'mdb-react-ui-kit';
 
 function ModeButton(props) {
   return(
     <li>
-      <div className="radio">
-        <label>
-          <input type="radio" value={props.mode}
-            onChange={props.handleRadioChanged}
-            checked={props.mode === props.selectedMode}  
-          />
-          {props.mode}
+      <div className="form-check">
+        <input type="radio" value={props.mode}
+          className="form-check-input"
+          name="flexRadioDefault"
+          onChange={props.handleRadioChanged}
+          checked={props.mode === props.selectedMode}  
+        />
+        <label className="form-check-label">
+           {
+              props.mode === 'babel_senses' ?
+              'Relación entre sentidos de BabelNet' :
+                props.mode === 'babel_categories' ?
+                'Relación entre categorías de BabelNet' :
+                  props.mode === 'babel_hypernyms' ?
+                  'Relación de hiperonimia de BabelNet' :
+                  'Otro (en desarrollo)'
+            }
         </label>
       </div>
     </li>
@@ -29,40 +41,82 @@ function ModesList(props) {
     />
   );
   return (
-    <ul>
-      {listModes}
-    </ul>
+    <MDBCard>
+      <MDBCardBody>
+        <MDBCardTitle>
+          Modo de análisis
+        </MDBCardTitle>
+        <ul>
+          {listModes}
+        </ul>
+      </MDBCardBody>
+    </MDBCard>
   );
 }
 
-function UserInput(props) {
+function IntroduceText(props) {
   return (
-    <form onSubmit={props.handleSubmit}>
-      <ModesList
-        availableModes={props.availableModes}
-        selectedMode={props.selectedMode}
-        handleRadioChanged={props.handleRadioChanged}
-      />
-      <label>
-        Metáfora:
-        <textarea value={props.metaphorToCheck} onChange={props.handleFormChange} />        
-      </label>
-      <input type="submit" value="Submit" />
-    </form>
+      <form onSubmit={props.handleSubmit}>
+        <MDBCard>
+          <MDBCardBody>
+            <MDBCardTitle>
+              Texto a analizar
+            </MDBCardTitle>
+            <br/>
+            <MDBInput type="textarea" rows="2" label="Texto" icon="pencil-alt" textarea onChange={props.handleFormChange}/>
+            <br/> 
+            <MDBBtn outline color='dark' type="submit">
+              Enviar
+            </MDBBtn>
+          </MDBCardBody>
+        </MDBCard>
+      </form>
   );
 }
 
-function ServerOutput() {
-  return null
+function OptionalUserKey(props){
+  return(
+    <MDBCard>
+      <MDBCardBody>
+        <MDBCardTitle>
+          Clave propia
+        </MDBCardTitle>
+        <br/>
+        <MDBInput label='Clave' type='password' onChange={props.handleKeyChange}/>
+        <br/> 
+        <MDBBtn outline color='dark' type="submit">
+          Enviar
+        </MDBBtn>
+      </MDBCardBody>
+    </MDBCard>
+  );
+}
+
+function ShowMetaphor(props) {
+  return (
+    <MDBCard>
+      <MDBCardBody>
+        <MDBCardTitle>
+          Resultado
+        </MDBCardTitle>
+        <br/>
+        <MDBCardText>
+          {props.analizedMetaphor}
+        </MDBCardText>
+      </MDBCardBody>
+    </MDBCard>
+  );
 }
 
 function MetaphorChecker() {
   const [metaphorToCheck, setMetaphorToCheck] = useState('Escriba la metáfora a comprobar');
+  const [userKey, setUserKey] = useState('');
   const [selectedMode, setMode] = useState(0)
+  const [analizedMetaphor, setAnalizedMetaphor] = useState('')
   const availableModes = [
-    'mode1',
-    'mode2',
-    'mode3',
+    'babel_senses',
+    'babel_categories',
+    'babel_hypernyms',
   ]
 
   function handleFormChange(event) {
@@ -71,15 +125,16 @@ function MetaphorChecker() {
   
   function handleSubmit(event) {
     if (selectedMode) {
+      setAnalizedMetaphor(waitingResponse())
       fetch('http://127.0.0.1:5000/api/v1/check?mode=' + 
         selectedMode +
-        'text=' + metaphorToCheck  
+        '&text=' + metaphorToCheck  
       )
         .then(res => res.json())
         .then((data) => {
-          setMetaphorToCheck(data.isMetaphor);
+          setAnalizedMetaphor(data.reason);
         })
-        .catch(console.log)
+        .catch(console.log);
     }
     else {
       alert('No se ha elegido un modo');
@@ -91,18 +146,51 @@ function MetaphorChecker() {
     setMode(event.target.value);
   }
 
+  function handleKeyChange(event) {
+    setUserKey(event.target.value);
+  }
+
+  function waitingResponse(){
+    return(
+      <MDBSpinner role='status'>
+        <span className='visually-hidden'>Loading...</span>
+      </MDBSpinner>
+    );
+  }
+
   return (
-    <div>
-      <UserInput
-        handleSubmit={handleSubmit}
-        handleFormChange={handleFormChange}
-        metaphorToCheck={metaphorToCheck}
-        selectedMode={selectedMode}
-        availableModes={availableModes}
-        handleRadioChanged={handleRadioChanged}
-      />
-      <ServerOutput/>
-    </div>
+    <MDBContainer>
+      <MDBRow>
+        <MDBCol md="6">
+          <ModesList
+            selectedMode={selectedMode}
+            availableModes={availableModes}
+            handleRadioChanged={handleRadioChanged}
+          />
+        </MDBCol>
+        <MDBCol md="6">
+          <OptionalUserKey 
+            handleKeyChange={handleKeyChange}
+            userKey={userKey}
+          />
+        </MDBCol>
+      </MDBRow>
+      <br/>
+      <MDBRow>
+        <MDBCol md="6">
+          <IntroduceText
+            handleSubmit={handleSubmit}
+            handleFormChange={handleFormChange}
+            metaphorToCheck={metaphorToCheck}
+          />
+        </MDBCol>
+        <MDBCol md="6">
+          <ShowMetaphor
+            analizedMetaphor={analizedMetaphor}
+          />
+        </MDBCol>
+      </MDBRow>
+    </MDBContainer>
   );
 }
 
