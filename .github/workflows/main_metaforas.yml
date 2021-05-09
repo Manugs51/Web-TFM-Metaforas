@@ -32,4 +32,3 @@ jobs:
         app-name: 'metaforas'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_9bf253b8efa840c2a8302752904bbd54 }}
-        package: .
