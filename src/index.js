@@ -126,7 +126,7 @@ function MetaphorChecker() {
   function handleSubmit(event) {
     if (selectedMode) {
       setAnalizedMetaphor(waitingResponse())
-      fetch('http://127.0.0.1:5000/api/v1/check?mode=' + 
+      fetch('https://reconocedor-metaforas.azurewebsites.net/api/v1/check?mode=' + 
         selectedMode +
         '&text=' + metaphorToCheck  
       )
