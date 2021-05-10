@@ -107,7 +107,7 @@ function ShowMetaphor(props) {
 }
 
 function MetaphorChecker() {
-  document.title = "Metaforas";
+  //document.title = "Metaforas";
   const [metaphorToCheck, setMetaphorToCheck] = useState('');
   const [userKey, setUserKey] = useState('');
   const [selectedMode, setMode] = useState(0)
