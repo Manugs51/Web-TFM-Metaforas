@@ -1,5 +1,5 @@
 import 'mdb-react-ui-kit/dist/css/mdb.min.css'
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBCardTitle, MDBInput, MDBCardText, MDBSpinner, MDBBtn } from 'mdb-react-ui-kit';
@@ -100,9 +100,7 @@ function ShowMetaphor(props) {
           Resultado
         </MDBCardTitle>
         <br/>
-        <MDBCardText>
-          {props.analizedMetaphor}
-        </MDBCardText>
+        {props.analizedMetaphor}
       </MDBCardBody>
     </MDBCard>
   );
@@ -133,7 +131,7 @@ function MetaphorChecker() {
       )
         .then(res => res.json())
         .then((data) => {
-          setAnalizedMetaphor(data.reason);
+          setAnalizedMetaphor( reasonOfMetaphor(data.isMetaphor, data.reason) );
         })
         .catch((error) => { 
           console.log(error);
@@ -159,6 +157,25 @@ function MetaphorChecker() {
       <MDBSpinner role='status'>
         <span className='visually-hidden'>Loading...</span>
       </MDBSpinner>
+    );
+  }
+
+  function reasonOfMetaphor(isMetaphor, reason){
+    return(
+      <Fragment>
+        {
+          isMetaphor ?
+            <MDBCardText className='text-warning'>
+              Potencialmente puede ser una metáfora porque:
+            </MDBCardText> :
+            <MDBCardText className='text-info'>
+              No es una metáfora porque:
+            </MDBCardText>
+        }
+        <MDBCardText>
+        {reason}
+        </MDBCardText>
+      </Fragment>
     );
   }
 
