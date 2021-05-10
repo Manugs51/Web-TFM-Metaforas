@@ -188,6 +188,7 @@ function MetaphorChecker() {
           />
         </MDBCol>
       </MDBRow>
+      <br/>
       <MDBRow>
         <MDBCol >
           <ShowMetaphor
