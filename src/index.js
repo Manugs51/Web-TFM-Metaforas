@@ -66,7 +66,9 @@ function IntroduceText(props) {
             <br/>
             <MDBInput type="textarea" rows="2" label="Texto" icon="pencil-alt" textarea onChange={props.handleFormChange}/>
             <br/> 
-            <MDBBtn outline color='dark' type="submit" disabled={props.metaphorToCheck.replace(/\s/g,"") === ""}>
+            <MDBBtn outline color='dark' type="submit" disabled={
+                props.metaphorToCheck.replace(/\s/g,"") === "" || props.selectedMode === 0
+            }>
               Enviar
             </MDBBtn>
           </MDBCardBody>
@@ -185,6 +187,7 @@ function MetaphorChecker() {
             handleSubmit={handleSubmit}
             handleFormChange={handleFormChange}
             metaphorToCheck={metaphorToCheck}
+            selectedMode={selectedMode}
           />
         </MDBCol>
       </MDBRow>
