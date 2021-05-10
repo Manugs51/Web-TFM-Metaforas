@@ -7,12 +7,13 @@ import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBCardTitle, MDBIn
 function ModeButton(props) {
   return(
     <li>
-      <div className="form-check">
+      <form className="form-check">
         <input type="radio" value={props.mode}
           className="form-check-input"
           name="flexRadioDefault"
           onChange={props.handleRadioChanged}
-          checked={props.mode === props.selectedMode}  
+          checked={props.mode === props.selectedMode}
+          disabled={props.mode==='babel_hypernyms'}
         />
         <label className="form-check-label">
            {
@@ -25,7 +26,7 @@ function ModeButton(props) {
                   'Otro (en desarrollo)'
             }
         </label>
-      </div>
+      </form>
     </li>
   );
 }
@@ -65,7 +66,7 @@ function IntroduceText(props) {
             <br/>
             <MDBInput type="textarea" rows="2" label="Texto" icon="pencil-alt" textarea onChange={props.handleFormChange}/>
             <br/> 
-            <MDBBtn outline color='dark' type="submit">
+            <MDBBtn outline color='dark' type="submit" disabled={props.metaphorToCheck.replace(/\s/g,"") === ""}>
               Enviar
             </MDBBtn>
           </MDBCardBody>
@@ -76,17 +77,14 @@ function IntroduceText(props) {
 
 function OptionalUserKey(props){
   return(
-    <MDBCard>
+    <MDBCard height="100%">
       <MDBCardBody>
         <MDBCardTitle>
           Clave propia
         </MDBCardTitle>
         <br/>
-        <MDBInput label='Clave' type='password' onChange={props.handleKeyChange}/>
-        <br/> 
-        <MDBBtn outline color='dark' type="submit">
-          Enviar
-        </MDBBtn>
+        <MDBInput label='Clave' type='password' disabled onChange={props.handleKeyChange}/>
+        <br/>
       </MDBCardBody>
     </MDBCard>
   );
@@ -109,7 +107,8 @@ function ShowMetaphor(props) {
 }
 
 function MetaphorChecker() {
-  const [metaphorToCheck, setMetaphorToCheck] = useState('Escriba la metáfora a comprobar');
+  document.title = "Metaforas";
+  const [metaphorToCheck, setMetaphorToCheck] = useState('');
   const [userKey, setUserKey] = useState('');
   const [selectedMode, setMode] = useState(0)
   const [analizedMetaphor, setAnalizedMetaphor] = useState('')
@@ -160,15 +159,16 @@ function MetaphorChecker() {
 
   return (
     <MDBContainer>
+      <br/>
       <MDBRow>
-        <MDBCol md="6">
+        <MDBCol md="7">
           <ModesList
             selectedMode={selectedMode}
             availableModes={availableModes}
             handleRadioChanged={handleRadioChanged}
           />
         </MDBCol>
-        <MDBCol md="6">
+        <MDBCol md="5">
           <OptionalUserKey 
             handleKeyChange={handleKeyChange}
             userKey={userKey}
@@ -177,14 +177,16 @@ function MetaphorChecker() {
       </MDBRow>
       <br/>
       <MDBRow>
-        <MDBCol md="6">
+        <MDBCol>
           <IntroduceText
             handleSubmit={handleSubmit}
             handleFormChange={handleFormChange}
             metaphorToCheck={metaphorToCheck}
           />
         </MDBCol>
-        <MDBCol md="6">
+      </MDBRow>
+      <MDBRow>
+        <MDBCol >
           <ShowMetaphor
             analizedMetaphor={analizedMetaphor}
           />
