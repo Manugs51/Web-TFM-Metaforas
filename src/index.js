@@ -77,7 +77,7 @@ function IntroduceText(props) {
 
 function OptionalUserKey(props){
   return(
-    <MDBCard height="100%">
+    <MDBCard>
       <MDBCardBody>
         <MDBCardTitle>
           Clave propia
@@ -133,7 +133,10 @@ function MetaphorChecker() {
         .then((data) => {
           setAnalizedMetaphor(data.reason);
         })
-        .catch(console.log);
+        .catch((error) => { 
+          console.log(error);
+          setAnalizedMetaphor('Ocurrió un fallo con la API');
+        });
     }
     else {
       alert('No se ha elegido un modo');
